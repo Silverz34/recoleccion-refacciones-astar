@@ -7,7 +7,12 @@ authors = [
     { name = "Silverz34", email = "pradogordillomichael@gmail.com" }
 ]
 requires-python = ">=3.14"
-dependencies = []
+dependencies = [
+    "matplotlib>=3.11.2",
+    "networkx>=3.7",
+    "pandas>=3.1.0",
+    "rich>=15.0.0",
+]
 
 [project.scripts]
 rutas-almacen = "rutas_almacen:main"
