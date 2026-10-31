@@ -2,7 +2,7 @@ import math
 import heapq
 import time
 from dataclasses import dataclass
-from almacen import Pieza, costo_paso, penalizacion_nivel, PENALIZACION_ZONA
+from rutas_almacen.almacen import Pieza, costo_paso, penalizacion_nivel, PENALIZACION_ZONA
 from typing import Any
 
 

@@ -1,8 +1,8 @@
-import matploit.pyplot as plt
+import matplotlib.pyplot as plt
 
-def grafica_costos(df, archivo="costos.png")
+def grafica_costos(df, archivo="costos.png"):
     """Costo total por pedido: orden del pedido vs A* ponderado"""
-    tabla = df.pivot(index="pedido", columns="metodo", values="costo")
+    tabla = df.pivot(index="Pedido", columns="Método", values="Costo")
     ax = tabla.plot(kind= "bar", figsize=(9, 5), rot = 0)
     ax.set_ylabel("costo total de recolección")
     ax.set_title("costo por pedido: orden del pedido vs A* ponderado")
@@ -14,8 +14,8 @@ def grafica_costos(df, archivo="costos.png")
 
 def grafica_nodos(df, archivo="nodos.png"):
     """Nodos revisados por pedido según el peso w."""
-    solo_astar = df[df["metodo"].str.startswith("A*")]
-    tabla = solo_astar.pivot(index="pedido", columns="metodo", value= "nodos revisados")
+    solo_astar = df[df["Método"].str.startswith("A*")]
+    tabla = solo_astar.pivot(index="Pedido", columns="Método", values="Nodos revisados")
     ax= tabla.plot(kind="bar", figsize=(9,5), rot= 0)
     ax.set_ylabel("nodos revisados")
     ax.set_title("Nodos revisados por pedido según w")
