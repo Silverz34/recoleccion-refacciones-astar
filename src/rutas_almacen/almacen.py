@@ -1,3 +1,5 @@
+import math
+from collections import defaultdict
 from dataclasses import dataclass
 
 #Estructura del nodo
@@ -30,5 +32,47 @@ def crear_nodos():
     nodos["ENT"] = Nodo("ENT", "Pasillo", None, 14, 10)
     return nodos
 
+
+# construccion de las aristas
+PENALIZACION_ZONA = 5
+
+def crear_grafo(nodos):
+    pares = []
+    for zona in ZONAS:
+        #Estantes vecinos en la misma fila
+        for inicio in (1, 4):
+            pares.append((f"{zona}{inicio}", f"{zona}{inicio + 1}"))
+            pares.append((f"{zona}{inicio + 1}", f"{zona}{inicio + 2}"))
+        #Cada estante con el acceso de su zona
+        for n in range(1, 7):
+            pares.append((f"{zona}{n}", f"{zona}-ACC"))
+
+    #Acceso, pasillos centrales y entrada
+    pares += [("A-ACC", "P1"), ("B-ACC", "P1"),
+             ("C-ACC", "P2"), ("D-ACC", "P2"),
+             ("P1", "ENT"), ("P2", "ENT")
+    ]
+    grafo = defaultdict(dict)
+    for a, b in pares :
+        d = math.hypot(nodos[a].x - nodos[b].x, nodos[a].y - nodos[b].y)
+        grafo [a][b] = d
+        grafo [b][a] = d
+    return grafo
+
+
+def costo_paso(nodos, grafo, origen, destino):
+    """Distancia + 5 si se entra a una zona distinta de la actual."""
+    costo = grafo[origen][destino]
+    zona_destino = nodos[destino].zona
+    if zona_destino != "Pasillo" and nodos[origen].zona != zona_destino:
+        costo += PENALIZACION_ZONA
+    return costo
+
 if __name__ == "__main__":
- print(len(crear_nodos()))
+ nodos = crear_nodos()
+ grafo = crear_grafo(nodos)
+ print(len(nodos))
+ print(sum(len(v) for v in grafo.values())//2)
+ print(costo_paso(nodos, grafo, "A-ACC", "P1"))
+ print(costo_paso(nodos, grafo, "P1", "B-ACC"))
+ print(round(costo_paso(nodos, grafo, "A1", "A-ACC"), 2))
