@@ -25,9 +25,9 @@ def sucesores(estado, nodos, grafo, inventario):
         pieza = inventario[codigo]
         if pieza.nodo == estado.nodo:
             nuevo = Estado(estado.nodo, estado.pendientes - {codigo})
-            yield (f"recoger{codigo}", nuevo, (0,0, penalizacion_nivel(pieza)))
+            yield (f"recoger {codigo}", nuevo, (0,0, penalizacion_nivel(pieza)))
 
-def heuristica (estado, nodos, inventario, incluir_zona = True):
+def heuristica (estado, nodos, inventario,incluir_zona = True):
     if not estado.pendientes:
         return 0
     actual = nodos [estado.nodo]
@@ -60,5 +60,40 @@ def a_estrella(nodo_inicio, codigos, nodos, grafo, inventario, w = 1.0, incluir_
     """A* ponderado: f(n) = g(n) + w * h(n)"""
     t0 = time.perf_counter()
     inicio = Estado(nodo_inicio, frozenset(codigos))
-    g = {inicio: 0.0}
-    padre =
+    g : dict [Estado, float] ={inicio: 0.0}  # mejor costo conocido para llegar
+    padre : dict[Estado, tuple | None]={inicio: None} # estado : (estado previo,accion, desglose)
+    contador = 0
+    h0 = heuristica(inicio,nodos,inventario, incluir_zona)
+    frontera = [(w * h0, contador, 0.0, inicio)]
+    revisados = 0
+
+    while frontera:
+        _, _, g_actual, actual = heapq.heappop(frontera)
+        if g_actual > g[actual]:
+            continue
+        revisados += 1
+
+
+        if es_meta(actual):
+            pasos = reconstruir(actual, padre)
+            return {
+                "pasos" : pasos,
+                "orden" : [p[0].split()[1] for p in pasos if p[0]. startswith("recoger")],
+                "costo" : g_actual,
+                "distancia" : sum(p[2][0] for p in pasos),
+                "zona" : sum(p[2][1] for p in pasos),
+                "nivel" : sum(p[2][2] for p in pasos),
+               "revisados" : revisados,
+               "tiempo" : time.perf_counter() - t0,
+            }
+
+        for accion, nuevo, desglose, in sucesores(actual, nodos, grafo, inventario):
+            g_nuevo = g_actual + sum(desglose)
+            if g_nuevo < g.get(nuevo, float("inf")):
+                g[nuevo] = g_nuevo
+                padre[nuevo] = (actual, accion, desglose)
+                contador += 1
+                f_nuevo = g_nuevo + w * heuristica(nuevo, nodos, inventario, incluir_zona)
+                heapq.heappush(frontera, (f_nuevo, contador, g_nuevo, nuevo))
+
+    raise ValueError("No existe una ruta que recoja todas las piezas del pedido")
