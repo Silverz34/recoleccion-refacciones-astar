@@ -2,6 +2,10 @@ import math
 from collections import defaultdict
 from dataclasses import dataclass
 
+PENALIZACION_NIVEL = {1: 0, 2: 2, 3: 4}
+PENALIZACION_ZONA = 5
+
+
 #Estructura del nodo
 @dataclass(frozen=True)
 class Nodo:
@@ -34,7 +38,6 @@ def crear_nodos():
 
 
 # construccion de las aristas
-PENALIZACION_ZONA = 5
 
 def crear_grafo(nodos):
     pares = []
@@ -68,6 +71,31 @@ def costo_paso(nodos, grafo, origen, destino):
         costo += PENALIZACION_ZONA
     return costo
 
+# Inventario y penalizacion por nivel de estanteria
+
+@dataclass(frozen= True)
+class Pieza :
+    codigo: str
+    nodo : str
+    nivel : int
+
+INVENTARIO = {p.codigo: p for p in[
+    Pieza("R-101", "A2", 1), Pieza("R-102", "A5", 3), Pieza("R-103", "A6", 2),
+    Pieza("R-201", "B1", 2), Pieza("R-202", "B4", 1), Pieza("R-203", "B6", 3),
+    Pieza("R-301", "C3", 1), Pieza("R-302", "C5", 2), Pieza("R-303", "C2", 3),
+    Pieza("R-401", "D1", 3), Pieza("R-402", "D4", 2), Pieza("R-403", "D6", 1),
+]}
+
+def penalizacion_nivel(pieza):
+    return PENALIZACION_NIVEL[pieza.nivel]
+
+def validar_inventario (nodos, inventario):
+    """Revisar que cada pieza esté en unn estante real y con un nivel valido"""
+    for p in inventario.values():
+        assert p.nodo in nodos and nodos[p.nodo].estante is not None, p
+        assert p.nivel in PENALIZACION_NIVEL, p
+
+
 if __name__ == "__main__":
  nodos = crear_nodos()
  grafo = crear_grafo(nodos)
@@ -76,3 +104,7 @@ if __name__ == "__main__":
  print(costo_paso(nodos, grafo, "A-ACC", "P1"))
  print(costo_paso(nodos, grafo, "P1", "B-ACC"))
  print(round(costo_paso(nodos, grafo, "A1", "A-ACC"), 2))
+ validar_inventario(nodos, INVENTARIO)
+ print(len(INVENTARIO))
+ print(penalizacion_nivel(INVENTARIO["R-102"]))
+ print(penalizacion_nivel(INVENTARIO["R-101"]))
