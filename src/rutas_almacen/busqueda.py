@@ -3,7 +3,7 @@ import heapq
 import time
 from dataclasses import dataclass
 from almacen import Pieza, costo_paso, penalizacion_nivel, PENALIZACION_ZONA
-
+from typing import Any
 
 
 @dataclass(frozen=True)
@@ -97,3 +97,20 @@ def a_estrella(nodo_inicio, codigos, nodos, grafo, inventario, w = 1.0, incluir_
                 heapq.heappush(frontera, (f_nuevo, contador, g_nuevo, nuevo))
 
     raise ValueError("No existe una ruta que recoja todas las piezas del pedido")
+
+
+
+# metodo de comparacion, no se si sea necesario pero aja
+def ruta_orden_pedido(nodo_inicio, codigos, nodos, grafo, inventario):
+    """Línea base: ir primero a la primera pieza listada, luego a la segunda.
+    Cada tramo usa la mejor ruta (w=1); solo el ORDEN queda fijo por el pedido."""
+    claves = ("costo", "distancia", "zona", "nivel", "revisados", "tiempo")
+    total : dict[str, Any] = {k: 0 for k in claves}
+    actual = nodo_inicio
+    for codigo in codigos:
+        r = a_estrella(actual, [codigo], nodos, grafo, inventario, w=1.0)
+        for k in claves:
+            total[k] += r[k]
+        actual = inventario[codigo].nodo
+    total["orden"] = list(codigos)
+    return total
