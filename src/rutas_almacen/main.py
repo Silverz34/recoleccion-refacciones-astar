@@ -3,7 +3,7 @@ from rutas_almacen.almacen import crear_nodos, crear_grafo, INVENTARIO
 from rutas_almacen.busqueda import a_estrella, ruta_orden_pedido
 from rutas_almacen.graficas import grafica_costos, grafica_nodos
 from rutas_almacen.salida import mostrar_ruta
-
+from rutas_almacen.entrada import mostrar_inventario, pedir_pedido, pedir_peso
 
 PEDIDOS = [
     ("P1", "ENT", ["R-101", "R-203"]),
@@ -40,6 +40,14 @@ def evaluar(nodos, grafo):
             filas.append(fila(pedido, f"A* w={w}", r, cota))
     return pd.DataFrame(filas)
 
+def ejecutar_interactivo(nodos, grafo):
+    mostrar_inventario(INVENTARIO, nodos)
+    inicio, codigos = pedir_pedido(nodos, INVENTARIO)
+    w = pedir_peso()
+    r = a_estrella(inicio, codigos, nodos, grafo, INVENTARIO, w=w)
+    mostrar_ruta(r, inicio, nodos, INVENTARIO)
+
+
 if __name__ == "__main__":
     nodos = crear_nodos()
     grafo = crear_grafo(nodos)
@@ -47,5 +55,4 @@ if __name__ == "__main__":
     print(df.to_string(index=False))
     grafica_costos(df)
     grafica_nodos(df)
-    r = a_estrella("A1", ["R-403", "R-102"], nodos, grafo, INVENTARIO, w=1.0)
-    mostrar_ruta(r, "A1", nodos, INVENTARIO)
+    ejecutar_interactivo(nodos, grafo)

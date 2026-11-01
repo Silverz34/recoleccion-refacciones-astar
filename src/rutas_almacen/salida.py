@@ -29,7 +29,7 @@ def mostrar_ruta(resultado, inicio, nodos, inventario, titulo="Ruta de recolecci
     costos.add_column("Costo", justify="right")
     costos.add_row("Distancia", f"{resultado['distancia']:.2f}")
     costos.add_row("Penalización por cambio de zona", f"{resultado['zona']:.2f}")
-    costos.add_row("Penalización por nivel",f"{resultado['nivel']:-2f}")
+    costos.add_row("Penalización por nivel",f"{resultado['nivel']:.2f}")
     costos.add_section()
     costos.add_row("[bold]Total[/bold]", f"[bold]{resultado['costo']:.2f}[/bold]")
     consola.print(costos)
