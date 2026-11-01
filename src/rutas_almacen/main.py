@@ -2,6 +2,8 @@ import pandas as pd
 from rutas_almacen.almacen import crear_nodos, crear_grafo, INVENTARIO
 from rutas_almacen.busqueda import a_estrella, ruta_orden_pedido
 from rutas_almacen.graficas import grafica_costos, grafica_nodos
+from rutas_almacen.salida import mostrar_ruta
+
 
 PEDIDOS = [
     ("P1", "ENT", ["R-101", "R-203"]),
@@ -45,3 +47,5 @@ if __name__ == "__main__":
     print(df.to_string(index=False))
     grafica_costos(df)
     grafica_nodos(df)
+    r = a_estrella("A1", ["R-403", "R-102"], nodos, grafo, INVENTARIO, w=1.0)
+    mostrar_ruta(r, "A1", nodos, INVENTARIO)
