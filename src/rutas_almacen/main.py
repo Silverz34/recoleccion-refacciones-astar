@@ -168,8 +168,7 @@ class InterfazAlmacen:
 
         df = pd.DataFrame(filas)
 
-        # Insertar en tabla alternando colores (efecto zebra)
-        for i, row in df.iterrows():
+        for i, (index, row) in enumerate(df.iterrows()):
             tag = "par" if i % 2 == 0 else "impar"
             self.tree.insert("", "end", values=(row["Pedido"], row["Método"], row["Orden"], row["Costo"], row["Nodos revisados"], row["Tiempo (ms)"]), tags=(tag,))
 
