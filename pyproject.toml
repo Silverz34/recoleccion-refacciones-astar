@@ -25,3 +25,8 @@ build-backend = "uv_build"
 venvPath = "."
 venv = ".venv"
 typeCheckingMode = "standard"
+
+[tool.uv.workspace]
+members = [
+    "main.py",
+]
