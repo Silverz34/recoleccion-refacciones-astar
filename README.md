@@ -4,7 +4,7 @@ Guía para correr `recoleccion-refacciones-astar` en Windows usando `uv`.
 
 ## 1. Instalar uv
 
-Abre PowerShell (no hace falta como administrador) y ejecuta:
+Abre PowerShell y ejecuta:
 
 ```powershell
 powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
