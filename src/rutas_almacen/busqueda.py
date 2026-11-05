@@ -56,8 +56,11 @@ def reconstruir(estado, padre):
     pasos.reverse()
     return pasos
 
-def a_estrella(nodo_inicio, codigos, nodos, grafo, inventario, w = 1.0, incluir_zona=True):
-    """A* ponderado: f(n) = g(n) + w * h(n)"""
+def a_estrella(nodo_inicio, codigos, nodos, grafo, inventario, w = 1.0, incluir_zona=True, traza=None):
+    """A* ponderado: f(n) = g(n) + w * h(n)
+
+    traza (opcional): si se pasa una lista, se agrega un diccionario por cada
+    estado expandido (para animar la búsqueda). Con traza=None no cambia nada."""
     t0 = time.perf_counter()
     inicio = Estado(nodo_inicio, frozenset(codigos))
     g : dict [Estado, float] ={inicio: 0.0}  # mejor costo conocido para llegar
@@ -73,6 +76,19 @@ def a_estrella(nodo_inicio, codigos, nodos, grafo, inventario, w = 1.0, incluir_
             continue
         revisados += 1
 
+        if traza is not None:
+            previo = padre[actual]
+            traza.append({
+                "paso": revisados,
+                "nodo": actual.nodo,
+                "pendientes": sorted(actual.pendientes),
+                "g": g_actual,
+                "f": g_actual + w * heuristica(actual, nodos, inventario, incluir_zona),
+                "frontera": len(frontera),
+                "accion": previo[1] if previo else "inicio",
+                "previo": previo[0].nodo if previo else None,
+                "meta": es_meta(actual),
+            })
 
         if es_meta(actual):
             pasos = reconstruir(actual, padre)
