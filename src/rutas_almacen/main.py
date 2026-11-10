@@ -6,6 +6,7 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from rutas_almacen.almacen import crear_nodos, crear_grafo, INVENTARIO
 from rutas_almacen.busqueda import a_estrella, ruta_orden_pedido
 from rutas_almacen.graficas import grafica_costos, grafica_nodos
+from rutas_almacen.pestana_animacion import PestanaAnimacion
 
 PESOS = (1, 1.5, 2)
 
@@ -72,6 +73,10 @@ class InterfazAlmacen:
         self.notebook.add(self.tab_tabla, text=" Tabla de Resultados ")
         self.notebook.add(self.tab_costos, text=" Gráfica de Costos ")
         self.notebook.add(self.tab_nodos, text=" Gráfica de Nodos ")
+
+        # Pestaña nueva: animación paso a paso de la búsqueda y de la ruta
+        self.tab_animacion = PestanaAnimacion(self.notebook, self.nodos, self.grafo, INVENTARIO)
+        self.notebook.add(self.tab_animacion, text=" Animación ")
 
         # Configurar Tabla
         self.tree = ttk.Treeview(self.tab_tabla, columns=("Pedido", "Método", "Orden", "Costo", "Nodos", "Tiempo"), show="headings")
@@ -176,6 +181,7 @@ class InterfazAlmacen:
         self.tree.tag_configure("impar", background="#ffffff")
 
         self.actualizar_graficas(df)
+        self.tab_animacion.actualizar_pedidos(pedidos_ingresados)
         self.notebook.select(self.tab_tabla)
 
     def actualizar_graficas(self, df):
